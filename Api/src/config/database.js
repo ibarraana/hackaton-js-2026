@@ -1,7 +1,5 @@
 import { Sequelize } from 'sequelize'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: './local.env' })
+import 'dotenv/config'
 
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -21,6 +19,6 @@ export const testConnection = async () => {
     console.log('✅ Base de datos lista.')
   } catch (error) {
     console.error('❌ Error crítico:', error.message)
-    process.exit(1) // Detenemos la app si no hay DB
+    process.exit(1); // Detenemos la app si no hay DB
   }
 }

@@ -3,7 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 
 // Aqui traigo el ruteo
-// import ruteo from './router/index.js'
+import ruteo from './router/index.js'
 
 const app = express()
 
