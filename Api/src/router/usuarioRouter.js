@@ -2,16 +2,14 @@ import { Router } from "express"
 
 import { 
     obtenerUsuario, 
-    obtenerUsuarioPorId, 
     crearUsuario, 
-    actualizarUsuario, 
-    eliminarUsuario 
+    solicitarRecuperacion, 
+    restablecerContrasenia 
 } from "../controllers/usuarioController.js" 
 
 export const UsuarioRouteo = Router()
 
 UsuarioRouteo.get('/', obtenerUsuario)
-UsuarioRouteo.get('/:id', obtenerUsuarioPorId)
 UsuarioRouteo.post('/', crearUsuario)
-UsuarioRouteo.put('/:id', actualizarUsuario)
-UsuarioRouteo.delete('/:id', eliminarUsuario)
+UsuarioRouteo.post('/recuperar', solicitarRecuperacion)
+UsuarioRouteo.put('/recuperar', restablecerContrasenia)

@@ -19,6 +19,10 @@ const Usuario = sequelize.define('Usuario', {
   passwordUsuario: {
     type: DataTypes.STRING(25),
     allowNull: false
+  },
+  codigoRecuperacion: {
+    type: DataTypes.STRING(8),
+    allowNull: true
   }
 }, {
   tableName: 'usuarios'

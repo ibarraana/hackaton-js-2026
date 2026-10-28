@@ -1,5 +1,7 @@
 import { Usuario } from '../models/index.js'
 import { enviarCorreo } from '../services/emailServices.js'
+import crypto from 'crypto'
+
 
 export const obtenerUsuario = async (req, res) => {
     try { 
@@ -10,15 +12,6 @@ export const obtenerUsuario = async (req, res) => {
     }
 }
 
-export const obtenerUsuarioPorId = async (req, res) => {
-    try { 
-        const usuario = await Usuario.findByPk(req.params.id); 
-        if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
-        res.json(usuario); 
-    } catch (e) { 
-      res.status(500).json({ error: e.message })
-    }
-}
 
 export const crearUsuario = async (req, res) => {
     try { 
@@ -42,22 +35,51 @@ export const crearUsuario = async (req, res) => {
     }
 }
 
-export const actualizarUsuario = async (req, res) => {
-    try { 
-        const [filas] = await Usuario.update(req.body, { where: { id_usuario: req.params.id } })
-        if (filas === 0) return res.status(404).json({ error: 'Usuario no encontrado' })
-        res.json({ message: 'Actualizado' })
-    } catch (e) { 
-      res.status(400).json({ error: e.message }) 
+export const solicitarRecuperacion = async (req, res) => {
+    try {
+        const { email } = req.body
+
+        const usuario = await Usuario.findOne({ where: { email } })
+        if (!usuario) {
+            return res.status(404).json({ error: 'No existe un usuario registrado con ese correo' })
+        }
+
+        const codigoSeguridad = Math.floor(100000 + Math.random() * 900000).toString()
+
+        usuario.codigoRecuperacion = codigoSeguridad
+        await usuario.save()
+
+        const mensajeHtml = `
+            <h2>Restablecer tu contraseña</h2>
+            <p>Hola ${usuario.nombre}, has solicitado restablecer tu clave.</p>
+            <p>Tu código de seguridad es: <strong>${codigoSeguridad}</strong></p>
+            <p>Este código expirará en 15 minutos. No lo compartas con nadie.</p>
+        `
+
+        await enviarCorreo(email, "Código de recuperación de contraseña", mensajeHtml)
+
+        return res.status(200).json({ message: 'Código de verificación enviado al correo electrónico' })
+    } catch (e) {
+        return res.status(500).json({ error: e.message })
     }
 }
 
-export const eliminarUsuario = async (req, res) => {
-    try { 
-        const filas = await Usuario.destroy({ where: { id_usuario: req.params.id } })
-        if (filas === 0) return res.status(404).json({ error: 'Usuario no encontrado' })
-        res.json({ message: 'Eliminado' })
-    } catch (e) { 
-      res.status(500).json({ error: e.message })
+export const restablecerContrasenia = async (req, res) => {
+    try {
+        const { email, codigo, nuevaPassword } = req.body
+
+        const usuario = await Usuario.findOne({ where: { email } })
+        
+        if (!usuario) {
+            return res.status(400).json({ error: 'El código es inválido o el correo no coincide' })
+        }
+
+        usuario.passwordUsuario = nuevaPassword
+        usuario.codigoRecuperacion = null
+        await usuario.save()
+
+        return res.status(200).json({ message: 'Contraseña actualizada con éxito' })
+    } catch (e) {
+        return res.status(500).json({ error: e.message })
     }
 }
