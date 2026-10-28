@@ -38,6 +38,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 
 
 
-// app.use('/api', ruteo)
+app.use('/api', ruteo)
 
 export default app

@@ -17,12 +17,12 @@ const Cliente = sequelize.define("Cliente",
         allowNull: false,
     },
     fechaIngreso: {
-        type: DataTypes.TIME,
+        type: DataTypes.DATE,
         allowNull: false,
     }
   },
   {
-    tableName: "cliente",
+    tableName: "clientes",
   },
 );
 

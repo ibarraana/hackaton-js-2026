@@ -13,7 +13,7 @@ const EstadoPedido = sequelize.define('EstadoPedido', {
     allowNull: false
   }
 }, {
-  tableName: 'estado_pedidos'
+  tableName: 'estados_pedidos'
 })
 
 export default EstadoPedido

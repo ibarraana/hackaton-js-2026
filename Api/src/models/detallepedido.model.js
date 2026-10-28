@@ -25,7 +25,7 @@ const DetallePedido = sequelize.define('DetallePedido', {
     allowNull: false
   }
 }, {
-  tableName: 'detalles_pedido'
+  tableName: 'detalles_pedidos'
 })
 
 export default DetallePedido
