@@ -1,4 +1,5 @@
 import { Usuario } from '../models/index.js'
+import { enviarCorreo } from '../services/emailServices.js'
 
 export const obtenerUsuario = async (req, res) => {
     try { 
@@ -21,7 +22,20 @@ export const obtenerUsuarioPorId = async (req, res) => {
 
 export const crearUsuario = async (req, res) => {
     try { 
-      res.status(201).json(await Usuario.create(req.body)); 
+      let nombre = req.body.nombre
+      let email = req.body.email
+      let passwordUsuario = req.body.passwordUsuario
+
+      const nuevoUsuario = await Usuario.create(req.body)
+
+      try {
+        let mensajeHtml = "<h1>Bienvenido al programa de E-commerce, tu email es: " + email + "</h1>"      
+        await enviarCorreo(email, "Registro en el sistema", mensajeHtml)
+      } catch(mailError) {
+        console.error("⚠️ El usuario se creó pero falló el envío del mail:", mailError.message);
+      }
+
+      res.status(201).json(nuevoUsuario)
     } 
     catch (e) { 
       res.status(400).json({ error: e.message }); 
